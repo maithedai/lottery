@@ -144,7 +144,7 @@ class PlanedLine(models.Model):
     def _compute_total(self):
         for item in self:
             if item.planed_id.day_of_week == '0':
-                item.total = (item.HCM + item.DT + item.CM) + (item._PS + item.DT_PS + item.CM_PS)
+                item.total = (item.HCM + item.DT + item.CM) + (item.HCM_PS + item.DT_PS + item.CM_PS)
             elif item.planed_id.day_of_week == '1':
                 item.total = (item.BL + item.BT + item.VT) + (item.BL_PS + item.BT_PS + item.VT_PS)
             elif item.planed_id.day_of_week == '2':

@@ -1,14 +1,14 @@
 <odoo>
-    <record id="create_plan_form_view_wz" model="ir.ui.view">
-        <field name="name">Tạo kế hoạch</field>
-        <field name="model">create.plan</field>
+    <record id="create_purchase_inventory_view_wz" model="ir.ui.view">
+        <field name="name">Tạo phiếu nhập</field>
+        <field name="model">purchase.inventory.wz</field>
         <field name="arch" type="xml">
             <form>
                 <group>
                     <field name="date"/>
                 </group>
                 <footer>
-                    <button name="create_plan" string="Tạo kế hoạch" type="object" class="oe_highlight"/>
+                    <button name="create_purchase" string="Tạo" type="object" class="oe_highlight"/>
                     <button string="Đóng" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>

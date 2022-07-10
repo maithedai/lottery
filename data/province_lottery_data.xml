@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="HCM" model="province.lottery">
+            <field name="name">TP HCM</field>
+            <field name="code">HCM_1</field>
+            <field name="group">0</field>
+        </record>
+
+        <record id="DT" model="province.lottery">
+            <field name="name">ĐT</field>
+            <field name="code">DT</field>
+            <field name="group">0</field>
+        </record>
+
+        <record id="CM" model="province.lottery">
+            <field name="name">CM</field>
+            <field name="code">CM</field>
+            <field name="group">0</field>
+        </record>
+
+        <record id="BL" model="province.lottery">
+            <field name="name">BL</field>
+            <field name="code">BL</field>
+            <field name="group">1</field>
+        </record>
+
+        <record id="BT" model="province.lottery">
+            <field name="name">BT</field>
+            <field name="code">BT</field>
+            <field name="group">1</field>
+        </record>
+
+        <record id="VT" model="province.lottery">
+            <field name="name">VT</field>
+            <field name="code">VT</field>
+            <field name="group">1</field>
+        </record>
+
+        <record id="ST" model="province.lottery">
+            <field name="name">ST</field>
+            <field name="code">ST</field>
+            <field name="group">2</field>
+        </record>
+
+        <record id="CT" model="province.lottery">
+            <field name="name">CT</field>
+            <field name="code">CT</field>
+            <field name="group">2</field>
+        </record>
+
+        <record id="DN" model="province.lottery">
+            <field name="name">ĐN</field>
+            <field name="code">DN</field>
+            <field name="group">2</field>
+        </record>
+
+        <record id="TN" model="province.lottery">
+            <field name="name">TN</field>
+            <field name="code">TN</field>
+            <field name="group">3</field>
+        </record>
+
+        <record id="AG" model="province.lottery">
+            <field name="name">AG</field>
+            <field name="code">AG</field>
+            <field name="group">3</field>
+        </record>
+
+        <record id="BTH" model="province.lottery">
+            <field name="name">BTH</field>
+            <field name="code">BTH</field>
+            <field name="group">3</field>
+        </record>
+
+        <record id="BD" model="province.lottery">
+            <field name="name">BD</field>
+            <field name="code">BD</field>
+            <field name="group">4</field>
+        </record>
+
+        <record id="TV" model="province.lottery">
+            <field name="name">TV</field>
+            <field name="code">TV</field>
+            <field name="group">4</field>
+        </record>
+
+        <record id="VL" model="province.lottery">
+            <field name="name">VL</field>
+            <field name="code">VL</field>
+            <field name="group">4</field>
+        </record>
+
+        <record id="HCM_2" model="province.lottery">
+            <field name="name">TP HCM</field>
+            <field name="code">HCM_2</field>
+            <field name="group">5</field>
+        </record>
+
+        <record id="LA" model="province.lottery">
+            <field name="name">LA</field>
+            <field name="code">LA</field>
+            <field name="group">5</field>
+        </record>
+
+        <record id="BP" model="province.lottery">
+            <field name="name">BP</field>
+            <field name="code">BP</field>
+            <field name="group">5</field>
+        </record>
+
+        <record id="HG" model="province.lottery">
+            <field name="name">HG</field>
+            <field name="code">HG</field>
+            <field name="group">5</field>
+        </record>
+
+        <record id="KG" model="province.lottery">
+            <field name="name">KG</field>
+            <field name="code">KG</field>
+            <field name="group">6</field>
+        </record>
+
+        <record id="DL" model="province.lottery">
+            <field name="name">DL</field>
+            <field name="code">DL</field>
+            <field name="group">6</field>
+        </record>
+
+        <record id="TG" model="province.lottery">
+            <field name="name">TG</field>
+            <field name="code">TG</field>
+            <field name="group">6</field>
+        </record>
+    </data>
+</odoo>

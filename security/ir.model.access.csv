@@ -4,3 +4,7 @@ access_planed_line,access_planed_line,model_planed_line,base.group_user,1,1,1,1
 access_create_plan,access_create_plan,model_create_plan,base.group_user,1,1,1,1
 access_customer,access_customer,model_customer,base.group_user,1,1,1,1
 access_customer.plan,access_customer.plan,model_customer_plan,base.group_user,1,1,1,1
+access_purchase.inventory,access_purchase.inventory,model_purchase_inventory,base.group_user,1,1,1,1
+access_purchase.inventory.wz,access_purchase.inventory.wz,model_purchase_inventory_wz,base.group_user,1,1,1,1
+access_purchase.inventory.line,access_purchase.inventory.line,model_purchase_inventory_line,base.group_user,1,1,1,1
+access_province.lottery,access_province.lottery,model_province_lottery,base.group_user,1,1,1,1
