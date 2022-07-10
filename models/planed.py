@@ -45,7 +45,7 @@ class Planed(models.Model):
 
     name = fields.Char(string='Tên kế hoạch', default='')
     date = fields.Date(string='Ngày', default=datetime.now())
-    lines = fields.One2many('planed.line', 'planed_id')
+    lines = fields.One2many('planed.line', 'planed_id', string='Chi tiết')
     state = fields.Selection([('draft', 'Dự thảo'), ('done', 'Đã hoàn thành')], default='draft')
 
     day_of_week = fields.Selection([

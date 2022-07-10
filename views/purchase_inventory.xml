@@ -3,7 +3,7 @@
         <field name="name">Phiếu nhập kho</field>
         <field name="model">purchase.inventory</field>
         <field name="arch" type="xml">
-            <tree create="false">
+            <tree create="false" default_order="date desc">
                 <field name="name"/>
                 <field name="date"/>
             </tree>
