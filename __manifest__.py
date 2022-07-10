@@ -15,12 +15,15 @@
         'security/ir.model.access.csv',
         'views/planed.xml',
         'wizard/create_plan.xml',
+        'wizard/create_return_stock.xml',
         'views/customer.xml',
         'views/res_users.xml',
         'views/purchase_inventory.xml',
+        'views/return_stock_view.xml',
         'wizard/create_customer.xml',
         'wizard/purchase_inventory_wz.xml',
         'data/province_lottery_data.xml',
+        'data/data_tele_data.xml',
     ],
     'assets': {
         'web.assets_backend': {
