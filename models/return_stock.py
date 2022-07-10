@@ -250,6 +250,7 @@ class DataTele(models.Model):
     _name = "data.tele"
 
     name = fields.Char('Đài')
+    code = fields.Char('Code')
 
 
 class ReturnStockTele(models.Model):
@@ -258,25 +259,98 @@ class ReturnStockTele(models.Model):
     return_stock_id = fields.Many2one('return.stock')
     data_tele_id = fields.Many2one('data.tele', "Đài", readonly=1)
 
-    HCM = fields.Integer(string='TP HCM')
-    DT = fields.Integer(string='ĐT')
-    CM = fields.Integer(string='CM')
-    BL = fields.Integer(string='CM')
-    BT = fields.Integer(string='BT')
-    VT = fields.Integer(string='VT')
-    ST = fields.Integer(string='ST')
-    CT = fields.Integer(string='ST')
-    DN = fields.Integer(string='ĐN')
-    TN = fields.Integer(string='TN')
-    AG = fields.Integer(string='AG')
-    BTH = fields.Integer(string='BTH')
-    BD = fields.Integer(string='BD')
-    TV = fields.Integer(string='TV')
-    VL = fields.Integer(string='VL')
-    HCM_2 = fields.Integer(string='TP HCM')
-    LA = fields.Integer(string='LA')
-    BP = fields.Integer(string='BP')
-    HG = fields.Integer(string='HG')
-    KG = fields.Integer(string='KG')
-    DL = fields.Integer(string='ĐL')
-    TG = fields.Integer(string='TG')
+    HCM = fields.Char(string='TP HCM', compute="_compute_tele_value")
+    DT = fields.Char(string='ĐT', compute="_compute_tele_value")
+    CM = fields.Char(string='CM', compute="_compute_tele_value")
+    BL = fields.Char(string='CM', compute="_compute_tele_value")
+    BT = fields.Char(string='BT', compute="_compute_tele_value")
+    VT = fields.Char(string='VT', compute="_compute_tele_value")
+    ST = fields.Char(string='ST', compute="_compute_tele_value")
+    CT = fields.Char(string='ST', compute="_compute_tele_value")
+    DN = fields.Char(string='ĐN', compute="_compute_tele_value")
+    TN = fields.Char(string='TN', compute="_compute_tele_value")
+    AG = fields.Char(string='AG', compute="_compute_tele_value")
+    BTH = fields.Char(string='BTH', compute="_compute_tele_value")
+    BD = fields.Char(string='BD', compute="_compute_tele_value")
+    TV = fields.Char(string='TV', compute="_compute_tele_value")
+    VL = fields.Char(string='VL', compute="_compute_tele_value")
+    HCM_2 = fields.Char(string='TP HCM', compute="_compute_tele_value")
+    LA = fields.Char(string='LA', compute="_compute_tele_value")
+    BP = fields.Char(string='BP', compute="_compute_tele_value")
+    HG = fields.Char(string='HG', compute="_compute_tele_value")
+    KG = fields.Char(string='KG', compute="_compute_tele_value")
+    DL = fields.Char(string='ĐL', compute="_compute_tele_value")
+    TG = fields.Char(string='TG', compute="_compute_tele_value")
+
+    @api.depends('return_stock_id', 'return_stock_id.lines')
+    def _compute_tele_value(self):
+        for r in self:
+            if r.data_tele_id.code == 'slte':
+                r.HCM = str(sum(r.return_stock_id.lines.mapped('HCM')))
+                r.DT = str(sum(r.return_stock_id.lines.mapped('DT')))
+                r.CM = str(sum(r.return_stock_id.lines.mapped('CM')))
+                r.BL = str(sum(r.return_stock_id.lines.mapped('BL')))
+                r.BT = str(sum(r.return_stock_id.lines.mapped('BT')))
+                r.VT = str(sum(r.return_stock_id.lines.mapped('VT')))
+                r.ST = str(sum(r.return_stock_id.lines.mapped('ST')))
+                r.CT = str(sum(r.return_stock_id.lines.mapped('CT')))
+                r.DN = str(sum(r.return_stock_id.lines.mapped('DN')))
+                r.TN = str(sum(r.return_stock_id.lines.mapped('TN')))
+                r.AG = str(sum(r.return_stock_id.lines.mapped('AG')))
+                r.BTH = str(sum(r.return_stock_id.lines.mapped('BTH')))
+                r.BD = str(sum(r.return_stock_id.lines.mapped('BD')))
+                r.TV = str(sum(r.return_stock_id.lines.mapped('TV')))
+                r.VL = str(sum(r.return_stock_id.lines.mapped('VL')))
+                r.HCM_2 = str(sum(r.return_stock_id.lines.mapped('HCM_2')))
+                r.LA = str(sum(r.return_stock_id.lines.mapped('LA')))
+                r.BP = str(sum(r.return_stock_id.lines.mapped('BP')))
+                r.HG = str(sum(r.return_stock_id.lines.mapped('HG')))
+                r.KG = str(sum(r.return_stock_id.lines.mapped('KG')))
+                r.DL = str(sum(r.return_stock_id.lines.mapped('DL')))
+                r.TG = str(sum(r.return_stock_id.lines.mapped('TG')))
+            elif r.data_tele_id.code == 'tl':
+                r.HCM = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
+                r.DT = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
+                r.CM = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
+                r.BL = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
+                r.BT = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
+                r.VT = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
+                r.ST = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
+                r.CT = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
+                r.DN = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
+                r.TN = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
+                r.AG = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
+                r.BTH = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
+                r.BD = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
+                r.TV = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
+                r.VL = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
+                r.HCM_2 = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
+                r.LA = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
+                r.BP = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
+                r.HG = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
+                r.KG = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
+                r.DL = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
+                r.TG = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
+            else:
+                r.HCM = ''
+                r.DT = ''
+                r.CM = ''
+                r.BL = ''
+                r.BT = ''
+                r.VT = ''
+                r.ST = ''
+                r.CT = ''
+                r.DN = ''
+                r.TN = ''
+                r.AG = ''
+                r.BTH = ''
+                r.BD = ''
+                r.TV = ''
+                r.VL = ''
+                r.HCM_2 = ''
+                r.LA = ''
+                r.BP = ''
+                r.HG = ''
+                r.KG = ''
+                r.DL = ''
+                r.TG = ''
