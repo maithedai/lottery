@@ -14,6 +14,7 @@
                         <field name="lines">
                             <tree editable="bottom" create="false" delete="false">
                                 <field name="customer_id" force_save="1"/>
+                                <field name="day_of_week" force_save="1"/>
                                 <field name="HCM" force_save="1" attrs="{'column_invisible': [('parent.day_of_week', '!=', '0')]}"/>
                                 <field name="DT" force_save="1" attrs="{'column_invisible': [('parent.day_of_week', '!=', '0')]}"/>
                                 <field name="CM" force_save="1" attrs="{'column_invisible': [('parent.day_of_week', '!=', '0')]}"/>
