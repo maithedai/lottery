@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_planed,access_planed,model_planed,base.group_user,1,1,1,1
+access_planed_line,access_planed_line,model_planed_line,base.group_user,1,1,1,1
+access_create_plan,access_create_plan,model_create_plan,base.group_user,1,1,1,1
+access_customer,access_customer,model_customer,base.group_user,1,1,1,1
+access_customer.plan,access_customer.plan,model_customer_plan,base.group_user,1,1,1,1

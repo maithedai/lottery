@@ -1,0 +1,108 @@
+<odoo>
+    <record id="form_planed" model="ir.ui.view">
+        <field name="name">Kế hoạch lãnh vé</field>
+        <field name="model">planed</field>
+        <field name="arch" type="xml">
+            <form create="false">
+                <field name="day_of_week" invisible="1"/>
+                <div class="d-flex">
+                    <label for="date" string="Ngày"/>
+                    <field name="date" readonly="1" nolabel="1"/>
+                </div>
+                <notebook>
+                    <page string="Chi tiết">
+                        <field name="lines">
+                            <tree editable="bottom" create="false" delete="false">
+                                <field name="customer_id" force_save="1"/>
+                                <field name="HCM" force_save="1" attrs="{'column_invisible': [('parent.day_of_week', '!=', '0')]}"/>
+                                <field name="DT" force_save="1" attrs="{'column_invisible': [('parent.day_of_week', '!=', '0')]}"/>
+                                <field name="CM" force_save="1" attrs="{'column_invisible': [('parent.day_of_week', '!=', '0')]}"/>
+                                <field name="BL" force_save="1" attrs="{'column_invisible': [('parent.day_of_week', '!=', '1')]}"/>
+                                <field name="BT" force_save="1" attrs="{'column_invisible': [('parent.day_of_week', '!=', '1')]}"/>
+                                <field name="VT" force_save="1" attrs="{'column_invisible': [('parent.day_of_week', '!=', '1')]}"/>
+                                <field name="ST" force_save="1" attrs="{'column_invisible': [('parent.day_of_week', '!=', '2')]}"/>
+                                <field name="CT" force_save="1" attrs="{'column_invisible': [('parent.day_of_week', '!=', '2')]}"/>
+                                <field name="DN" force_save="1" attrs="{'column_invisible': [('parent.day_of_week', '!=', '2')]}"/>
+                                <field name="TN" force_save="1" attrs="{'column_invisible': [('parent.day_of_week', '!=', '3')]}"/>
+                                <field name="AG" force_save="1" attrs="{'column_invisible': [('parent.day_of_week', '!=', '3')]}"/>
+                                <field name="BTH" force_save="1" attrs="{'column_invisible': [('parent.day_of_week', '!=', '3')]}"/>
+                                <field name="BD" force_save="1" attrs="{'column_invisible': [('parent.day_of_week', '!=', '4')]}"/>
+                                <field name="TV" force_save="1" attrs="{'column_invisible': [('parent.day_of_week', '!=', '4')]}"/>
+                                <field name="VL" force_save="1" attrs="{'column_invisible': [('parent.day_of_week', '!=', '4')]}"/>
+                                <field name="HCM_2" force_save="1" attrs="{'column_invisible': [('parent.day_of_week', '!=', '5')]}"/>
+                                <field name="LA" force_save="1" attrs="{'column_invisible': [('parent.day_of_week', '!=', '5')]}"/>
+                                <field name="BP" force_save="1" attrs="{'column_invisible': [('parent.day_of_week', '!=', '5')]}"/>
+                                <field name="HG" force_save="1" attrs="{'column_invisible': [('parent.day_of_week', '!=', '5')]}"/>
+                                <field name="KG" force_save="1" attrs="{'column_invisible': [('parent.day_of_week', '!=', '6')]}"/>
+                                <field name="DL" force_save="1" attrs="{'column_invisible': [('parent.day_of_week', '!=', '6')]}"/>
+                                <field name="TG" force_save="1" attrs="{'column_invisible': [('parent.day_of_week', '!=', '6')]}"/>
+                                <!-- Phát sinh-->
+                                <field name="HCM_PS" attrs="{'column_invisible': [('parent.day_of_week', '!=', '0')]}"/>
+                                <field name="DT_PS" attrs="{'column_invisible': [('parent.day_of_week', '!=', '0')]}"/>
+                                <field name="CM_PS" attrs="{'column_invisible': [('parent.day_of_week', '!=', '0')]}"/>
+                                <field name="BL_PS" attrs="{'column_invisible': [('parent.day_of_week', '!=', '1')]}"/>
+                                <field name="BT_PS" attrs="{'column_invisible': [('parent.day_of_week', '!=', '1')]}"/>
+                                <field name="VT_PS" attrs="{'column_invisible': [('parent.day_of_week', '!=', '1')]}"/>
+                                <field name="ST_PS" attrs="{'column_invisible': [('parent.day_of_week', '!=', '2')]}"/>
+                                <field name="CT_PS" attrs="{'column_invisible': [('parent.day_of_week', '!=', '2')]}"/>
+                                <field name="DN_PS" attrs="{'column_invisible': [('parent.day_of_week', '!=', '2')]}"/>
+                                <field name="TN_PS" attrs="{'column_invisible': [('parent.day_of_week', '!=', '3')]}"/>
+                                <field name="AG_PS" attrs="{'column_invisible': [('parent.day_of_week', '!=', '3')]}"/>
+                                <field name="BTH_PS" attrs="{'column_invisible': [('parent.day_of_week', '!=', '3')]}"/>
+                                <field name="BD_PS" attrs="{'column_invisible': [('parent.day_of_week', '!=', '4')]}"/>
+                                <field name="TV_PS" attrs="{'column_invisible': [('parent.day_of_week', '!=', '4')]}"/>
+                                <field name="VL_PS" attrs="{'column_invisible': [('parent.day_of_week', '!=', '4')]}"/>
+                                <field name="HCM_2_PS" attrs="{'column_invisible': [('parent.day_of_week', '!=', '5')]}"/>
+                                <field name="LA_PS" attrs="{'column_invisible': [('parent.day_of_week', '!=', '5')]}"/>
+                                <field name="BP_PS" attrs="{'column_invisible': [('parent.day_of_week', '!=', '5')]}"/>
+                                <field name="HG_PS" attrs="{'column_invisible': [('parent.day_of_week', '!=', '5')]}"/>
+                                <field name="KG_PS" attrs="{'column_invisible': [('parent.day_of_week', '!=', '6')]}"/>
+                                <field name="DL_PS" attrs="{'column_invisible': [('parent.day_of_week', '!=', '6')]}"/>
+                                <field name="TG_PS" attrs="{'column_invisible': [('parent.day_of_week', '!=', '6')]}"/>
+                                <field name="total" force_save="1"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </form>
+        </field>
+    </record>
+    <record id="tree_planed" model="ir.ui.view">
+        <field name="name">Kế hoạch lãnh vé</field>
+        <field name="model">planed</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false"
+                decoration-info="state == 'done'"
+            >
+                <field name="name"/>
+                <field name="date"/>
+                <field name="state" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="planed_action_view" model="ir.actions.act_window">
+        <field name="type">ir.actions.act_window</field>
+        <field name="name">Kế hoạch lãnh vé</field>
+        <field name="res_model">planed</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="create_planed_action_view" model="ir.actions.act_window">
+        <field name="type">ir.actions.act_window</field>
+        <field name="name">Tạo kế hoạch</field>
+        <field name="res_model">create.plan</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="planed_menu_view"
+              name="Kế hoạch lãnh vé"
+              web_icon="lottery,static/src/img/icons_green/calendar.png"
+              action="planed_action_view"/>
+
+    <menuitem id="create_planed_menu_view"
+              name="Tạo kế hoạch" parent="planed_menu_view"
+              action="create_planed_action_view"/>
+</odoo>

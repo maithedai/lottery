@@ -1,0 +1,17 @@
+<odoo>
+    <record id="create_plan_form_view_wz" model="ir.ui.view">
+        <field name="name">Tạo kế hoạch</field>
+        <field name="model">create.plan</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="date"/>
+                </group>
+                <footer>
+                    <button name="create_plan" string="Tạo kế hoạch" type="object" class="oe_highlight"/>
+                    <button string="Hủy" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
