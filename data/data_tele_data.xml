@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="slte" model="data.tele">
+            <field name="name">SL trả ế</field>
+        </record>
+
+        <record id="tt" model="data.tele">
+            <field name="name">Thực tế</field>
+        </record>
+
+        <record id="lech" model="data.tele">
+            <field name="name">Lệch</field>
+        </record>
+
+        <record id="tl" model="data.tele">
+            <field name="name">Tỉ lệ</field>
+        </record>
+    </data>
+</odoo>
