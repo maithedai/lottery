@@ -1,0 +1,17 @@
+<odoo>
+    <record id="create_return_stock_form_view_wz" model="ir.ui.view">
+        <field name="name">Tạo kế hoạch</field>
+        <field name="model">create.return.stock</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="date"/>
+                </group>
+                <footer>
+                    <button name="create_return_stock" string="Tạo phiếu trả ế" type="object" class="oe_highlight"/>
+                    <button string="Đóng" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
