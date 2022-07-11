@@ -23,26 +23,6 @@ class ReturnStock(models.Model):
         for customer in customer_ids:
             vals = {
                 'customer_id': customer.id,
-                'HCM': customer.HCM,
-                'DT': customer.DT,
-                'CM': customer.CM,
-                'BL': customer.BL,
-                'BT': customer.BT,
-                'VT': customer.VT,
-                'ST': customer.ST,
-                'CT': customer.CT,
-                'DN': customer.DN,
-                'AG': customer.AG,
-                'BD': customer.BD,
-                'TV': customer.TV,
-                'VL': customer.VL,
-                'HCM_2': customer.HCM_2,
-                'LA': customer.LA,
-                'BP': customer.BP,
-                'HG': customer.HG,
-                'KG': customer.KG,
-                'DL': customer.DL,
-                'TG': customer.TG,
             }
             val_lines.append((0, 0, vals))
         res.update({'lines': val_lines})
