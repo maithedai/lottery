@@ -24,6 +24,7 @@
         'wizard/purchase_inventory_wz.xml',
         'data/province_lottery_data.xml',
         'data/data_tele_data.xml',
+        'data/data_planed.xml',
     ],
     'assets': {
         'web.assets_backend': {

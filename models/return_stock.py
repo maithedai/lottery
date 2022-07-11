@@ -133,43 +133,53 @@ class ReturnStockLine(models.Model):
                  'BTH', 'BD', 'TV', 'VL', 'HCM_2', 'LA', 'BP', 'HG', 'KG', 'DL', 'TG')
     def _compute_sum_return(self):
         for r in self:
-            if r.return_stock_id.day_of_week == 0:
-                r.sum_return = (r.HCM + r.DT + r.CM) * 1000
-            elif r.return_stock_id.day_of_week == 1:
-                r.sum_return = (r.BL + r.BT + r.VT) * 1000
-            elif r.return_stock_id.day_of_week == 2:
-                r.sum_return = (r.ST + r.CT + r.DN) * 1000
-            elif r.return_stock_id.day_of_week == 3:
-                r.sum_return = (r.TN + r.AG + r.BTH) * 1000
-            elif r.return_stock_id.day_of_week == 4:
-                r.sum_return = (r.BD + r.TV + r.VL) * 1000
-            elif r.return_stock_id.day_of_week == 5:
-                r.sum_return = (r.HCM_2 + r.LA + r.BP + r.HG) * 1000
+            if r.return_stock_id.day_of_week == '0':
+                r.sum_return = (r.HCM + r.DT + r.CM) * 10
+            elif r.return_stock_id.day_of_week == '1':
+                r.sum_return = (r.BL + r.BT + r.VT) * 10
+            elif r.return_stock_id.day_of_week == '2':
+                r.sum_return = (r.ST + r.CT + r.DN) * 10
+            elif r.return_stock_id.day_of_week == '3':
+                r.sum_return = (r.TN + r.AG + r.BTH) * 10
+            elif r.return_stock_id.day_of_week == '4':
+                r.sum_return = (r.BD + r.TV + r.VL) * 10
+            elif r.return_stock_id.day_of_week == '5':
+                r.sum_return = (r.HCM_2 + r.LA + r.BP + r.HG) * 10
             else:
-                r.sum_return = (r.KG + r.DL + r.TG) * 1000
+                r.sum_return = (r.KG + r.DL + r.TG) * 10
 
     @api.depends('HCM', 'DT', 'CM', 'BL', 'BT', 'VT', 'ST', 'CT', 'DN', 'TN', 'AG',
                  'BTH', 'BD', 'TV', 'VL', 'HCM_2', 'LA', 'BP', 'HG', 'KG', 'DL', 'TG')
     def _compute_consume(self):
         for r in self:
-            plan = self.env['planed.line'].search([('date', '=', r.date), ('customer_id', '=', r.customer_id.id)])
+            plan = self.env['planed.line'].search([('planed_id.date', '=', r.date), ('customer_id', '=', r.customer_id.id)])
             total = sum(plan.mapped('total'))
             r.consume = total - r.sum_return
 
     @api.depends('return_stock_id', 'return_stock_id.day_of_week')
     def _compute_ticket_receive(self):
         for r in self:
-            if r.return_stock_id.day_of_week == 0:
+            day_week = 0
+            if r.customer_id.planed.code == 'now':
+                day_week = str(r.return_stock_id.day_of_week)
+            elif r.customer_id.planed.code == 'now_1':
+                day_week = str(int(r.return_stock_id.day_of_week) + 1)
+            elif r.customer_id.planed.code == 'now_2':
+                day_week = str(int(r.return_stock_id.day_of_week) + 2)
+            elif r.customer_id.planed.code == 'now_3':
+                day_week = str(int(r.return_stock_id.day_of_week) + 3)
+
+            if day_week == '0':
                 r.ticket_receive = (r.customer_id.HCM + r.customer_id.DT + r.customer_id.CM) * 1000
-            elif r.return_stock_id.day_of_week == 1:
+            elif day_week == '1':
                 r.ticket_receive = (r.customer_id.BL + r.customer_id.BT + r.customer_id.VT) * 1000
-            elif r.return_stock_id.day_of_week == 2:
+            elif day_week == '2':
                 r.ticket_receive = (r.customer_id.ST + r.customer_id.CT + r.customer_id.DN) * 1000
-            elif r.return_stock_id.day_of_week == 3:
+            elif day_week == '3':
                 r.ticket_receive = (r.customer_id.TN + r.customer_id.AG + r.customer_id.BTH) * 1000
-            elif r.return_stock_id.day_of_week == 4:
+            elif day_week == '4':
                 r.ticket_receive = (r.customer_id.BD + r.customer_id.TV + r.customer_id.VL) * 1000
-            elif r.return_stock_id.day_of_week == 5:
+            elif day_week == '5':
                 r.ticket_receive = (r.customer_id.HCM_2 + r.customer_id.LA + r.customer_id.BP + r.customer_id.HG) * 1000
             else:
                 r.ticket_receive = (r.customer_id.KG + r.customer_id.DL + r.customer_id.TG) * 1000
@@ -210,17 +220,17 @@ class ReturnStockLine(models.Model):
                  'BTH_PC', 'BD_PC', 'TV_PC', 'VL_PC', 'HCM_2_PC', 'LA_PC', 'BP_PC', 'HG_PC', 'KG_PC', 'DL_PC', 'TG_PC')
     def _compute_percent(self):
         for r in self:
-            if r.return_stock_id.day_of_week == 0:
+            if r.return_stock_id.day_of_week == '0':
                 r.percent = (r.HCM_PC + r.DT_PC + r.CM_PC) / 3
-            elif r.return_stock_id.day_of_week == 1:
+            elif r.return_stock_id.day_of_week == '1':
                 r.percent = (r.BL_PC + r.BT_PC + r.VT_PC) / 3
-            elif r.return_stock_id.day_of_week == 2:
+            elif r.return_stock_id.day_of_week == '2':
                 r.percent = (r.ST_PC + r.CT_PC + r.DN_PC) / 3
-            elif r.return_stock_id.day_of_week == 3:
+            elif r.return_stock_id.day_of_week == '3':
                 r.percent = (r.TN_PC + r.AG_PC + r.BTH_PC) / 3
-            elif r.return_stock_id.day_of_week == 4:
+            elif r.return_stock_id.day_of_week == '4':
                 r.percent = (r.BD_PC + r.TV_PC + r.VL_PC) / 3
-            elif r.return_stock_id.day_of_week == 5:
+            elif r.return_stock_id.day_of_week == '5':
                 r.percent = (r.HCM_2_PC + r.LA_PC + r.BP_PC + r.HG_PC) / 3
             else:
                 r.percent = (r.KG_PC + r.DL_PC + r.TG_PC) / 3

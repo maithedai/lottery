@@ -144,7 +144,7 @@
         <field name="name">Trả ế</field>
         <field name="model">return.stock</field>
         <field name="arch" type="xml">
-            <tree create="false" edit="false">
+            <tree create="false" edit="false" default_order="date desc">
                 <field name="name"/>
                 <field name="date"/>
             </tree>
@@ -168,7 +168,7 @@
 
     <menuitem id="return_stock_menu_view"
               name="Trả ế"
-              web_icon="lottery,static/src/img/icons_green/calendar.png"
+              web_icon="lottery,static/src/img/icons_green/expenses.png"
               action="return_stock_action_view"/>
 
     <menuitem id="create_return_stock_menu_view"

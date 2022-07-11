@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="now" model="customer.plan">
+            <field name="name">Lãnh ngày hiện tại</field>
+            <field name="code">now</field>
+        </record>
+
+        <record id="now_1" model="customer.plan">
+            <field name="name">Lãnh trước 1 ngày</field>
+            <field name="code">now_1</field>
+        </record>
+
+        <record id="now_2" model="customer.plan">
+            <field name="name">Lãnh trước 2 ngày</field>
+            <field name="code">now_2</field>
+        </record>
+
+        <record id="now_3" model="customer.plan">
+            <field name="name">Lãnh trước 3 ngày</field>
+            <field name="code">now_3</field>
+        </record>
+    </data>
+</odoo>

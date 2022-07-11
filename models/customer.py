@@ -55,4 +55,5 @@ class CustomerPlan(models.Model):
     _name = 'customer.plan'
 
     name = fields.Char('Tên kế hoạch')
+    code = fields.Char('Mã kế hoạch')
     state = fields.Selection([('active', 'Hoạt động'), ('inactive', 'Ngừng hoạt động')])
