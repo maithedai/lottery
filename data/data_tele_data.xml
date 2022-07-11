@@ -3,18 +3,22 @@
     <data>
         <record id="slte" model="data.tele">
             <field name="name">SL trả ế</field>
+            <field name="code">slte</field>
         </record>
 
         <record id="tt" model="data.tele">
             <field name="name">Thực tế</field>
+            <field name="code">tt</field>
         </record>
 
         <record id="lech" model="data.tele">
             <field name="name">Lệch</field>
+            <field name="code">lech</field>
         </record>
 
         <record id="tl" model="data.tele">
             <field name="name">Tỉ lệ</field>
+            <field name="code">tl</field>
         </record>
     </data>
 </odoo>
