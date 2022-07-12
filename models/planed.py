@@ -168,4 +168,4 @@ class PlanedLine(models.Model):
                 item.total = (item.KG + item.DL + item.TG) + (item.KG_PS + item.DL_PS + item.TG_PS)
             else:
                 item.total = 0
-            item.total = item.total * 1000
+            item.total = item.total

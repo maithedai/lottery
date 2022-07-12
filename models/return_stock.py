@@ -9,6 +9,7 @@ class ReturnStock(models.Model):
     date = fields.Date(string='Ngày', default=datetime.now())
     lines = fields.One2many('return.stock.line', 'return_stock_id')
     tele_ids = fields.One2many('return.stock.tele', 'return_stock_id')
+    state = fields.Selection([('draft', 'Dự thảo'), ('done', 'Đã hoàn thành')], default='draft')
 
     @api.model
     def default_get(self, fields_list):
@@ -54,7 +55,7 @@ class ReturnStockLine(models.Model):
     CM = fields.Integer(string='CM')
     CM_PC = fields.Float(string='CM', readonly=1, compute="_compute_percent_back")
 
-    BL = fields.Integer(string='CM')
+    BL = fields.Integer(string='BL')
     BL_PC = fields.Float(string='BL', readonly=1, compute="_compute_percent_back")
 
     BT = fields.Integer(string='BT')
@@ -116,7 +117,7 @@ class ReturnStockLine(models.Model):
     consume = fields.Integer("Tiêu thụ", compute="_compute_consume")
     ticket_receive = fields.Integer("Lượng vé lãnh", compute='_compute_ticket_receive')
     du_thieu = fields.Integer('Dư thiếu')
-    revenues = fields.Float('Tiền thu', compute="_compute_revenues")
+    revenues = fields.Integer('Tiền thu', compute="_compute_revenues")
     day_of_week = fields.Selection([
         ('0', 'Thứ 2'),
         ('1', 'Thứ 3'),
@@ -134,27 +135,28 @@ class ReturnStockLine(models.Model):
     def _compute_sum_return(self):
         for r in self:
             if r.return_stock_id.day_of_week == '0':
-                r.sum_return = (r.HCM + r.DT + r.CM) * 10
+                r.sum_return = (r.HCM + r.DT + r.CM)
             elif r.return_stock_id.day_of_week == '1':
-                r.sum_return = (r.BL + r.BT + r.VT) * 10
+                r.sum_return = (r.BL + r.BT + r.VT)
             elif r.return_stock_id.day_of_week == '2':
-                r.sum_return = (r.ST + r.CT + r.DN) * 10
+                r.sum_return = (r.ST + r.CT + r.DN)
             elif r.return_stock_id.day_of_week == '3':
-                r.sum_return = (r.TN + r.AG + r.BTH) * 10
+                r.sum_return = (r.TN + r.AG + r.BTH)
             elif r.return_stock_id.day_of_week == '4':
-                r.sum_return = (r.BD + r.TV + r.VL) * 10
+                r.sum_return = (r.BD + r.TV + r.VL)
             elif r.return_stock_id.day_of_week == '5':
-                r.sum_return = (r.HCM_2 + r.LA + r.BP + r.HG) * 10
+                r.sum_return = (r.HCM_2 + r.LA + r.BP + r.HG)
             else:
-                r.sum_return = (r.KG + r.DL + r.TG) * 10
+                r.sum_return = (r.KG + r.DL + r.TG)
 
     @api.depends('HCM', 'DT', 'CM', 'BL', 'BT', 'VT', 'ST', 'CT', 'DN', 'TN', 'AG',
                  'BTH', 'BD', 'TV', 'VL', 'HCM_2', 'LA', 'BP', 'HG', 'KG', 'DL', 'TG')
     def _compute_consume(self):
         for r in self:
-            plan = self.env['planed.line'].search([('planed_id.date', '=', r.date), ('customer_id', '=', r.customer_id.id)])
+            plan = self.env['planed.line'].search(
+                [('planed_id.date', '=', r.date), ('customer_id', '=', r.customer_id.id)])
             total = sum(plan.mapped('total'))
-            r.consume = total - r.sum_return
+            r.consume = total - r.sum_return * 10000
 
     @api.depends('return_stock_id', 'return_stock_id.day_of_week')
     def _compute_ticket_receive(self):
@@ -170,51 +172,120 @@ class ReturnStockLine(models.Model):
                 day_week = str(int(r.return_stock_id.day_of_week) + 3)
 
             if day_week == '0':
-                r.ticket_receive = (r.customer_id.HCM + r.customer_id.DT + r.customer_id.CM) * 1000
+                r.ticket_receive = (r.customer_id.HCM + r.customer_id.DT + r.customer_id.CM)
             elif day_week == '1':
-                r.ticket_receive = (r.customer_id.BL + r.customer_id.BT + r.customer_id.VT) * 1000
+                r.ticket_receive = (r.customer_id.BL + r.customer_id.BT + r.customer_id.VT)
             elif day_week == '2':
-                r.ticket_receive = (r.customer_id.ST + r.customer_id.CT + r.customer_id.DN) * 1000
+                r.ticket_receive = (r.customer_id.ST + r.customer_id.CT + r.customer_id.DN)
             elif day_week == '3':
-                r.ticket_receive = (r.customer_id.TN + r.customer_id.AG + r.customer_id.BTH) * 1000
+                r.ticket_receive = (r.customer_id.TN + r.customer_id.AG + r.customer_id.BTH)
             elif day_week == '4':
-                r.ticket_receive = (r.customer_id.BD + r.customer_id.TV + r.customer_id.VL) * 1000
+                r.ticket_receive = (r.customer_id.BD + r.customer_id.TV + r.customer_id.VL)
             elif day_week == '5':
-                r.ticket_receive = (r.customer_id.HCM_2 + r.customer_id.LA + r.customer_id.BP + r.customer_id.HG) * 1000
+                r.ticket_receive = (r.customer_id.HCM_2 + r.customer_id.LA + r.customer_id.BP + r.customer_id.HG)
             else:
-                r.ticket_receive = (r.customer_id.KG + r.customer_id.DL + r.customer_id.TG) * 1000
+                r.ticket_receive = (r.customer_id.KG + r.customer_id.DL + r.customer_id.TG)
 
-    @api.depends('ticket_receive', 'sum_return')
+    @api.depends('ticket_receive', 'sum_return', 'du_thieu')
     def _compute_revenues(self):
         for r in self:
-            r.revenues = r.ticket_receive - r.sum_return * r.customer_id.price
+            province = self.env['province.lottery'].search([('group', '=', r.return_stock_id.day_of_week)])
+            revenues = r.ticket_receive
+            list_code = []
+            if r.HCM > 0:
+                price = province.filtered(lambda x: x.code == 'HCM').price
+                revenues -= ((r.sum_return * 10000) + r.du_thieu)  * price
+            if r.DT > 0:
+                price = province.filtered(lambda x: x.code == 'DT').price
+                revenues -= ((r.sum_return * 10000) + r.du_thieu)  * price
+            if r.CM > 0:
+                price = province.filtered(lambda x: x.code == 'CM').price
+                revenues -= ((r.sum_return * 10000) + r.du_thieu)  * price
+            if r.BL > 0:
+                price = province.filtered(lambda x: x.code == 'BL').price
+                revenues -= ((r.sum_return * 10000) + r.du_thieu)  * price
+            if r.BT > 0:
+                price = province.filtered(lambda x: x.code == 'BT').price
+                revenues -= ((r.sum_return * 10000) + r.du_thieu)  * price
+            if r.VT > 0:
+                price = province.filtered(lambda x: x.code == 'VT').price
+                revenues -= ((r.sum_return * 10000) + r.du_thieu)  * price
+            if r.ST > 0:
+                price = province.filtered(lambda x: x.code == 'ST').price
+                revenues -= ((r.sum_return * 10000) + r.du_thieu) * price
+            if r.CT > 0:
+                price = province.filtered(lambda x: x.code == 'CT').price
+                revenues -= ((r.sum_return * 10000) + r.du_thieu) * price
+            if r.DN > 0:
+                price = province.filtered(lambda x: x.code == 'DN').price
+                revenues -= ((r.sum_return * 10000) + r.du_thieu) * price
+            if r.TN > 0:
+                price = province.filtered(lambda x: x.code == 'TN').price
+                revenues -= ((r.sum_return * 10000) + r.du_thieu) * price
+            if r.AG > 0:
+                price = province.filtered(lambda x: x.code == 'AG').price
+                revenues -= ((r.sum_return * 10000) + r.du_thieu) * price
+            if r.BTH > 0:
+                price = province.filtered(lambda x: x.code == 'BTH').price
+                revenues -= ((r.sum_return * 10000) + r.du_thieu) * price
+            if r.BD > 0:
+                price = province.filtered(lambda x: x.code == 'BD').price
+                revenues -= ((r.sum_return * 10000) + r.du_thieu) * price
+            if r.TV > 0:
+                price = province.filtered(lambda x: x.code == 'TV').price
+                revenues -= ((r.sum_return * 10000) + r.du_thieu) * price
+            if r.VL > 0:
+                price = province.filtered(lambda x: x.code == 'VL').price
+                revenues -= ((r.sum_return * 10000) + r.du_thieu) * price
+            if r.HCM_2 > 0:
+                price = province.filtered(lambda x: x.code == 'HCM_2').price
+                revenues -= ((r.sum_return * 10000) + r.du_thieu) * price
+            if r.LA > 0:
+                price = province.filtered(lambda x: x.code == 'LA').price
+                revenues -= ((r.sum_return * 10000) + r.du_thieu) * price
+            if r.BP > 0:
+                price = province.filtered(lambda x: x.code == 'BP').price
+                revenues -= ((r.sum_return * 10000) + r.du_thieu) * price
+            if r.HG > 0:
+                price = province.filtered(lambda x: x.code == 'HG').price
+                revenues -= ((r.sum_return * 10000) + r.du_thieu) * price
+            if r.KG > 0:
+                price = province.filtered(lambda x: x.code == 'KG').price
+                revenues -= ((r.sum_return * 10000) + r.du_thieu) * price
+            if r.DL > 0:
+                price = province.filtered(lambda x: x.code == 'DL').price
+                revenues -= ((r.sum_return * 10000) + r.du_thieu) * price
+            if r.TG > 0:
+                price = province.filtered(lambda x: x.code == 'TG').price
+                revenues -= ((r.sum_return * 10000) + r.du_thieu) * price
+            r.revenues = revenues
 
     @api.depends('HCM', 'DT', 'CM', 'BL', 'BT', 'VT', 'ST', 'CT', 'DN', 'TN', 'AG',
                  'BTH', 'BD', 'TV', 'VL', 'HCM_2', 'LA', 'BP', 'HG', 'KG', 'DL', 'TG')
     def _compute_percent_back(self):
         for r in self:
-            r.HCM_PC = r.HCM / r.customer_id.HCM if r.customer_id.HCM > 0 else 0
-            r.DT_PC = r.DT / r.customer_id.DT if r.customer_id.DT > 0 else 0
-            r.CM_PC = r.CM / r.customer_id.CM if r.customer_id.CM > 0 else 0
-            r.BL_PC = r.BL / r.customer_id.BL if r.customer_id.BL > 0 else 0
-            r.BT_PC = r.BT / r.customer_id.BT if r.customer_id.BT > 0 else 0
-            r.VT_PC = r.VT / r.customer_id.VT if r.customer_id.VT > 0 else 0
-            r.ST_PC = r.ST / r.customer_id.ST if r.customer_id.ST > 0 else 0
-            r.CT_PC = r.CT / r.customer_id.CT if r.customer_id.CT > 0 else 0
-            r.DN_PC = r.DN / r.customer_id.DN if r.customer_id.DN > 0 else 0
-            r.TN_PC = r.TN / r.customer_id.TN if r.customer_id.TN > 0 else 0
-            r.AG_PC = r.AG / r.customer_id.AG if r.customer_id.AG > 0 else 0
-            r.BTH_PC = r.BTH / r.customer_id.BTH if r.customer_id.BTH > 0 else 0
-            r.BD_PC = r.BD / r.customer_id.BD if r.customer_id.BD > 0 else 0
-            r.TV_PC = r.TV / r.customer_id.TV if r.customer_id.TV > 0 else 0
-            r.VL_PC = r.VL / r.customer_id.VL if r.customer_id.VL > 0 else 0
-            r.HCM_2_PC = r.HCM_2 / r.customer_id.HCM_2 if r.customer_id.HCM_2 > 0 else 0
-            r.LA_PC = r.LA / r.customer_id.LA if r.customer_id.LA > 0 else 0
-            r.BP_PC = r.BP / r.customer_id.BP if r.customer_id.BP > 0 else 0
-            r.HG_PC = r.HG / r.customer_id.HG if r.customer_id.HG > 0 else 0
-            r.KG_PC = r.KG / r.customer_id.KG if r.customer_id.KG > 0 else 0
-            r.DL_PC = r.DL / r.customer_id.DL if r.customer_id.DL > 0 else 0
-            r.TG_PC = r.TG / r.customer_id.TG if r.customer_id.TG > 0 else 0
+            r.HCM_PC = ((r.HCM * 10000) / r.customer_id.HCM) * 100 if r.customer_id.HCM > 0 else 0
+            r.DT_PC = ((r.DT * 10000) / r.customer_id.DT) * 100 if r.customer_id.DT > 0 else 0
+            r.CM_PC = ((r.CM * 10000) / r.customer_id.CM) * 100 if r.customer_id.CM > 0 else 0
+            r.BL_PC = ((r.BL * 10000) / r.customer_id.BL) * 100 if r.customer_id.BL > 0 else 0
+            r.BT_PC = ((r.BT * 10000) / r.customer_id.BT) * 100 if r.customer_id.BT > 0 else 0
+            r.VT_PC = ((r.VT * 10000) / r.customer_id.VT) * 100 if r.customer_id.VT > 0 else 0
+            r.ST_PC = ((r.ST * 10000) / r.customer_id.ST) * 100 if r.customer_id.ST > 0 else 0
+            r.CT_PC = ((r.CT * 10000) / r.customer_id.CT) * 100 if r.customer_id.CT > 0 else 0
+            r.DN_PC = ((r.DN * 10000) / r.customer_id.DN) * 100 if r.customer_id.DN > 0 else 0
+            r.TN_PC = ((r.TN * 10000) / r.customer_id.TN) * 100 if r.customer_id.TN > 0 else 0
+            r.AG_PC = ((r.AG * 10000) / r.customer_id.AG) * 100 if r.customer_id.AG > 0 else 0
+            r.BTH_PC = ((r.BTH * 10000) / r.customer_id.BTH) * 100 if r.customer_id.BTH > 0 else 0
+            r.BD_PC = ((r.BD * 10000) / r.customer_id.BD) * 100 if r.customer_id.BD > 0 else 0
+            r.TV_PC = ((r.TV * 10000) / r.customer_id.TV) * 100 if r.customer_id.TV > 0 else 0
+            r.VL_PC = ((r.VL * 10000) / r.customer_id.VL) * 100 if r.customer_id.VL > 0 else 0
+            r.HCM_2_PC = ((r.HCM_2 * 10000) / r.customer_id.HCM_2) * 100 if r.customer_id.HCM_2 > 0 else 0
+            r.LA_PC = ((r.LA * 10000) / r.customer_id.LA) * 100 if r.customer_id.LA > 0 else 0
+            r.BP_PC = ((r.BP * 10000) / r.customer_id.BP) * 100 if r.customer_id.BP > 0 else 0
+            r.HG_PC = ((r.HG * 10000) / r.customer_id.HG) * 100 if r.customer_id.HG > 0 else 0
+            r.KG_PC = ((r.KG * 10000) / r.customer_id.KG) * 100 if r.customer_id.KG > 0 else 0
+            r.DL_PC = ((r.DL * 10000) / r.customer_id.DL) * 100 if r.customer_id.DL > 0 else 0
+            r.TG_PC = ((r.TG * 10000) / r.customer_id.TG) * 100 if r.customer_id.TG > 0 else 0
 
     @api.depends('HCM_PC', 'DT_PC', 'CM_PC', 'BL_PC', 'BT_PC', 'VT_PC', 'ST_PC', 'CT_PC', 'DN_PC', 'TN_PC', 'AG_PC',
                  'BTH_PC', 'BD_PC', 'TV_PC', 'VL_PC', 'HCM_2_PC', 'LA_PC', 'BP_PC', 'HG_PC', 'KG_PC', 'DL_PC', 'TG_PC')
@@ -276,51 +347,95 @@ class ReturnStockTele(models.Model):
     def _compute_tele_value(self):
         for r in self:
             if r.data_tele_id.code == 'slte':
-                r.HCM = str(sum(r.return_stock_id.lines.mapped('HCM')))
-                r.DT = str(sum(r.return_stock_id.lines.mapped('DT')))
-                r.CM = str(sum(r.return_stock_id.lines.mapped('CM')))
-                r.BL = str(sum(r.return_stock_id.lines.mapped('BL')))
-                r.BT = str(sum(r.return_stock_id.lines.mapped('BT')))
-                r.VT = str(sum(r.return_stock_id.lines.mapped('VT')))
-                r.ST = str(sum(r.return_stock_id.lines.mapped('ST')))
-                r.CT = str(sum(r.return_stock_id.lines.mapped('CT')))
-                r.DN = str(sum(r.return_stock_id.lines.mapped('DN')))
-                r.TN = str(sum(r.return_stock_id.lines.mapped('TN')))
-                r.AG = str(sum(r.return_stock_id.lines.mapped('AG')))
-                r.BTH = str(sum(r.return_stock_id.lines.mapped('BTH')))
-                r.BD = str(sum(r.return_stock_id.lines.mapped('BD')))
-                r.TV = str(sum(r.return_stock_id.lines.mapped('TV')))
-                r.VL = str(sum(r.return_stock_id.lines.mapped('VL')))
-                r.HCM_2 = str(sum(r.return_stock_id.lines.mapped('HCM_2')))
-                r.LA = str(sum(r.return_stock_id.lines.mapped('LA')))
-                r.BP = str(sum(r.return_stock_id.lines.mapped('BP')))
-                r.HG = str(sum(r.return_stock_id.lines.mapped('HG')))
-                r.KG = str(sum(r.return_stock_id.lines.mapped('KG')))
-                r.DL = str(sum(r.return_stock_id.lines.mapped('DL')))
-                r.TG = str(sum(r.return_stock_id.lines.mapped('TG')))
+                r.HCM = "{:,.0f}".format(sum(r.return_stock_id.lines.mapped('HCM')) * 10000)
+                r.DT = "{:,.0f}".format(sum(r.return_stock_id.lines.mapped('DT')) * 10000)
+                r.CM = "{:,.0f}".format(sum(r.return_stock_id.lines.mapped('CM')) * 10000)
+                r.BL = "{:,.0f}".format(sum(r.return_stock_id.lines.mapped('BL')) * 10000)
+                r.BT = "{:,.0f}".format(sum(r.return_stock_id.lines.mapped('BT')) * 10000)
+                r.VT = "{:,.0f}".format(sum(r.return_stock_id.lines.mapped('VT')) * 10000)
+                r.ST = "{:,.0f}".format(sum(r.return_stock_id.lines.mapped('ST')) * 10000)
+                r.CT = "{:,.0f}".format(sum(r.return_stock_id.lines.mapped('CT')) * 10000)
+                r.DN = "{:,.0f}".format(sum(r.return_stock_id.lines.mapped('DN')) * 10000)
+                r.TN = "{:,.0f}".format(sum(r.return_stock_id.lines.mapped('TN')) * 10000)
+                r.AG = "{:,.0f}".format(sum(r.return_stock_id.lines.mapped('AG')) * 10000)
+                r.BTH = "{:,.0f}".format(sum(r.return_stock_id.lines.mapped('BTH')) * 10000)
+                r.BD = "{:,.0f}".format(sum(r.return_stock_id.lines.mapped('BD')) * 10000)
+                r.TV = "{:,.0f}".format(sum(r.return_stock_id.lines.mapped('TV')) * 10000)
+                r.VL = "{:,.0f}".format(sum(r.return_stock_id.lines.mapped('VL')) * 10000)
+                r.HCM_2 = "{:,.0f}".format(sum(r.return_stock_id.lines.mapped('HCM_2')) * 10000)
+                r.LA = "{:,.0f}".format(sum(r.return_stock_id.lines.mapped('LA')) * 10000)
+                r.BP = "{:,.0f}".format(sum(r.return_stock_id.lines.mapped('BP')) * 10000)
+                r.HG = "{:,.0f}".format(sum(r.return_stock_id.lines.mapped('HG')) * 10000)
+                r.KG = "{:,.0f}".format(sum(r.return_stock_id.lines.mapped('KG')) * 10000)
+                r.DL = "{:,.0f}".format(sum(r.return_stock_id.lines.mapped('DL')) * 10000)
+                r.TG = "{:,.0f}".format(sum(r.return_stock_id.lines.mapped('TG')) * 10000)
             elif r.data_tele_id.code == 'tl':
-                r.HCM = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
-                r.DT = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
-                r.CM = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
-                r.BL = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
-                r.BT = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
-                r.VT = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
-                r.ST = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
-                r.CT = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
-                r.DN = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
-                r.TN = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
-                r.AG = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
-                r.BTH = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
-                r.BD = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
-                r.TV = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
-                r.VL = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
-                r.HCM_2 = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
-                r.LA = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
-                r.BP = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
-                r.HG = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
-                r.KG = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
-                r.DL = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
-                r.TG = str(sum(r.return_stock_id.lines.mapped('HCM'))) + '%'
+                r.HCM = "{:,.0f}%".format((sum(r.return_stock_id.lines.mapped('HCM')) / sum(
+                    r.return_stock_id.lines.mapped('sum_return')) * 100)) if sum(
+                    r.return_stock_id.lines.mapped('sum_return')) > 0 else 0
+                r.DT = "{:,.0f}%".format((sum(r.return_stock_id.lines.mapped('DT')) / sum(
+                    r.return_stock_id.lines.mapped('sum_return')) * 100)) if sum(
+                    r.return_stock_id.lines.mapped('sum_return')) > 0 else 0
+                r.CM = "{:,.0f}%".format((sum(r.return_stock_id.lines.mapped('CM')) / sum(
+                    r.return_stock_id.lines.mapped('sum_return')) * 100)) if sum(
+                    r.return_stock_id.lines.mapped('sum_return')) > 0 else 0
+                r.BL = "{:,.0f}%".format((sum(r.return_stock_id.lines.mapped('BL')) / sum(
+                    r.return_stock_id.lines.mapped('sum_return')) * 100)) if sum(
+                    r.return_stock_id.lines.mapped('sum_return')) > 0 else 0
+                r.BT = "{:,.0f}%".format((sum(r.return_stock_id.lines.mapped('BT')) / sum(
+                    r.return_stock_id.lines.mapped('sum_return')) * 100)) if sum(
+                    r.return_stock_id.lines.mapped('sum_return')) > 0 else 0
+                r.VT = "{:,.0f}%".format((sum(r.return_stock_id.lines.mapped('VT')) / sum(
+                    r.return_stock_id.lines.mapped('sum_return')) * 100)) if sum(
+                    r.return_stock_id.lines.mapped('sum_return')) > 0 else 0
+                r.ST = "{:,.0f}%".format((sum(r.return_stock_id.lines.mapped('ST')) / sum(
+                    r.return_stock_id.lines.mapped('sum_return')) * 100)) if sum(
+                    r.return_stock_id.lines.mapped('sum_return')) > 0 else 0
+                r.CT = "{:,.0f}%".format((sum(r.return_stock_id.lines.mapped('CT')) / sum(
+                    r.return_stock_id.lines.mapped('sum_return')) * 100)) if sum(
+                    r.return_stock_id.lines.mapped('sum_return')) > 0 else 0
+                r.DN = "{:,.0f}%".format((sum(r.return_stock_id.lines.mapped('DN')) / sum(
+                    r.return_stock_id.lines.mapped('sum_return')) * 100)) if sum(
+                    r.return_stock_id.lines.mapped('sum_return')) > 0 else 0
+                r.TN = "{:,.0f}%".format((sum(r.return_stock_id.lines.mapped('TN')) / sum(
+                    r.return_stock_id.lines.mapped('sum_return')) * 100)) if sum(
+                    r.return_stock_id.lines.mapped('sum_return')) > 0 else 0
+                r.AG = "{:,.0f}%".format((sum(r.return_stock_id.lines.mapped('AG')) / sum(
+                    r.return_stock_id.lines.mapped('sum_return')) * 100)) if sum(
+                    r.return_stock_id.lines.mapped('sum_return')) > 0 else 0
+                r.BTH = "{:,.0f}%".format((sum(r.return_stock_id.lines.mapped('BTH')) / sum(
+                    r.return_stock_id.lines.mapped('sum_return')) * 100)) if sum(
+                    r.return_stock_id.lines.mapped('sum_return')) > 0 else 0
+                r.BD = "{:,.0f}%".format((sum(r.return_stock_id.lines.mapped('BD')) / sum(
+                    r.return_stock_id.lines.mapped('sum_return')) * 100)) if sum(
+                    r.return_stock_id.lines.mapped('sum_return')) > 0 else 0
+                r.TV = "{:,.0f}%".format((sum(r.return_stock_id.lines.mapped('TV')) / sum(
+                    r.return_stock_id.lines.mapped('sum_return')) * 100)) if sum(
+                    r.return_stock_id.lines.mapped('sum_return')) > 0 else 0
+                r.VL = "{:,.0f}%".format((sum(r.return_stock_id.lines.mapped('VL')) / sum(
+                    r.return_stock_id.lines.mapped('sum_return')) * 100)) if sum(
+                    r.return_stock_id.lines.mapped('sum_return')) > 0 else 0
+                r.HCM_2 = "{:,.0f}%".format((sum(r.return_stock_id.lines.mapped('HCM_2')) / sum(
+                    r.return_stock_id.lines.mapped('sum_return')) * 100)) if sum(
+                    r.return_stock_id.lines.mapped('sum_return')) > 0 else 0
+                r.LA = "{:,.0f}%".format((sum(r.return_stock_id.lines.mapped('LA')) / sum(
+                    r.return_stock_id.lines.mapped('sum_return')) * 100)) if sum(
+                    r.return_stock_id.lines.mapped('sum_return')) > 0 else 0
+                r.BP = "{:,.0f}%".format((sum(r.return_stock_id.lines.mapped('BP')) / sum(
+                    r.return_stock_id.lines.mapped('sum_return')) * 100)) if sum(
+                    r.return_stock_id.lines.mapped('sum_return')) > 0 else 0
+                r.HG = "{:,.0f}%".format((sum(r.return_stock_id.lines.mapped('HG')) / sum(
+                    r.return_stock_id.lines.mapped('sum_return')) * 100)) if sum(
+                    r.return_stock_id.lines.mapped('sum_return')) > 0 else 0
+                r.KG = "{:,.0f}%".format((sum(r.return_stock_id.lines.mapped('KG')) / sum(
+                    r.return_stock_id.lines.mapped('sum_return')) * 100)) if sum(
+                    r.return_stock_id.lines.mapped('sum_return')) > 0 else 0
+                r.DL = "{:,.0f}%".format((sum(r.return_stock_id.lines.mapped('DL')) / sum(
+                    r.return_stock_id.lines.mapped('sum_return')) * 100)) if sum(
+                    r.return_stock_id.lines.mapped('sum_return')) > 0 else 0
+                r.TG = "{:,.0f}%".format((sum(r.return_stock_id.lines.mapped('TG')) / sum(
+                    r.return_stock_id.lines.mapped('sum_return')) * 100)) if sum(
+                    r.return_stock_id.lines.mapped('sum_return')) > 0 else 0
             else:
                 r.HCM = ''
                 r.DT = ''

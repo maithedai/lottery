@@ -5,11 +5,12 @@
         <field name="arch" type="xml">
             <form create="false">
                 <field name="day_of_week" invisible="1"/>
+                <field name="state" invisible="1"/>
                 <div class="d-flex">
-                    <label for="date" string="Ngày"/>
-                    <field name="date" readonly="1" nolabel="1"/>
+                    <label for="date" string="Ngày" attrs="{'readonly': [('state', '=', 'done')]}"/>
+                    <field name="date" readonly="1" nolabel="1" attrs="{'readonly': [('state', '=', 'done')]}"/>
                 </div>
-                <field name="lines">
+                <field name="lines" attrs="{'readonly': [('state', '=', 'done')]}">
                     <tree editable="bottom" create="false" delete="false">
                         <field name="customer_id" force_save="1"/>
                         <field name="HCM" force_save="1"
@@ -88,7 +89,7 @@
                         <field name="revenues"/>
                     </tree>
                 </field>
-                <field name="tele_ids" style="width: 50%">
+                <field name="tele_ids" style="width: 50%" attrs="{'readonly': [('state', '=', 'done')]}">
                     <tree editable="bottom" create="false" delete="false">
                         <field name="data_tele_id" force_save="1"/>
                         <field name="HCM" force_save="1" style="color: red"

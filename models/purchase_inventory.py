@@ -43,14 +43,15 @@ class PurchaseInventoryLine(models.Model):
     @api.depends('in_company', 'in_province')
     def _compute_total(self):
         for item in self:
-            item.total = (item.in_company + item.in_province) * 1000
+            item.total = (item.in_company + item.in_province)
 
 
 class ProvinceLottery(models.Model):
     _name = 'province.lottery'
 
     name = fields.Char(string='Tên đài')
-    code = fields.Char(string='Mã đài')
+    code = fields.Char(string='Mã đài', readonly=1)
+    price = fields.Float(string='Đơn giá', required=1)
     group = fields.Selection([
         ('0', 'Thứ 2'),
         ('1', 'Thứ 3'),
@@ -59,4 +60,4 @@ class ProvinceLottery(models.Model):
         ('4', 'Thứ 6'),
         ('5', 'Thứ 7'),
         ('6', 'Chủ nhật')
-    ])
+    ], string='Ngày quay')
