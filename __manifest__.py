@@ -10,7 +10,7 @@
     'company': '',
     'maintainer': '',
     'website': "",
-    "depends": ['base'],
+    "depends": ['base', 'mail'],
     "data": [
         'security/ir.model.access.csv',
         'views/planed.xml',

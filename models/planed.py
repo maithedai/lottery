@@ -8,6 +8,7 @@ from odoo import fields, api, models, _
 
 class Planed(models.Model):
     _name = 'planed'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _rec_name = 'name'
 
     @api.model
@@ -75,6 +76,66 @@ class Planed(models.Model):
                 raise ValidationError('Không thể xóa kế hoạch đã hoàn thành')
         return super(Planed, self).unlink()
 
+    # def write(self, vals):
+    #     raise ValidationError(self.field_two)
+    #     HCM_PS = self.HCM_PS
+    #     DT_PS = self.DT_PS
+    #     CM_PS = self.CM_PS
+    #     BL_PS = self.BL_PS
+    #     BT_PS = self.BT_PS
+    #     VT_PS = self.VT_PS
+    #     ST_PS = self.ST_PS
+    #     CT_PS = self.CT_PS
+    #     DN_PS = self.DN_PS
+    #     TN_PS = self.TN_PS
+    #     AG_PS = self.AG_PS
+    #     BTH_PS = self.BTH_PS
+    #     BD_PS = self.BD_PS
+    #     TV_PS = self.TV_PS
+    #     VL_PS = self.VL_PS
+    #     HCM_2_PS = self.HCM_2_PS
+    #     LA_PS = self.LA_PS
+    #     BP_PS = self.BP_PS
+    #     HG_PS = self.HG_PS
+    #     KG_PS = self.KG_PS
+    #     DL_PS = self.DL_PS
+    #     TG_PS = self.TG_PS
+    #     res = super(Planed, self).write(vals)
+    #     if 'lines' in vals:
+    #         for item in vals.get('lines'):
+    #             if not item:
+    #                 continue
+    #             if self.day_of_week == '0':
+    #                 self.message_post(body=f"TP HCM(PS): {HCM_PS} -> {self.HCM_PS}")
+    #                 self.message_post(body=f"DT(PS): {DT_PS} -> {self.DT_PS}")
+    #                 self.message_post(body=f"CM(PS): {CM_PS} -> {self.CM_PS}")
+    #             if self.day_of_week == '1':
+    #                 self.message_post(body=f"BL(PS): {BL_PS} -> {self.BL_PS}")
+    #                 self.message_post(body=f"BT(PS): {BT_PS} -> {self.BT_PS}")
+    #                 self.message_post(body=f"VT(PS): {VT_PS} -> {self.VT_PS}")
+    #             if self.day_of_week == '2':
+    #                 self.message_post(body=f"ST(PS): {ST_PS} -> {self.ST_PS}")
+    #                 self.message_post(body=f"CT(PS): {CT_PS} -> {self.CT_PS}")
+    #                 self.message_post(body=f"DN(PS): {DN_PS} -> {self.DN_PS}")
+    #             if self.day_of_week == '3':
+    #                 self.message_post(body=f"TN(PS): {TN_PS} -> {self.TN_PS}")
+    #                 self.message_post(body=f"AG(PS): {AG_PS} -> {self.AG_PS}")
+    #                 self.message_post(body=f"BTH(PS): {BTH_PS} -> {self.BTH_PS}")
+    #             if self.day_of_week == '4':
+    #                 self.message_post(body=f"BD(PS): {BD_PS} -> {self.BD_PS}")
+    #                 self.message_post(body=f"TV(PS): {TV_PS} -> {self.TV_PS}")
+    #                 self.message_post(body=f"VL(PS): {VL_PS} -> {self.VL_PS}")
+    #             if self.day_of_week == '5':
+    #                 self.message_post(body=f"TP HCM(PS): {HCM_2_PS} -> {self.HCM_2_PS}")
+    #                 self.message_post(body=f"LA(PS): {LA_PS} -> {self.LA_PS}")
+    #                 self.message_post(body=f"BP(PS): {BP_PS} -> {self.BP_PS}")
+    #                 self.message_post(body=f"HG(PS): {HG_PS} -> {self.HG_PS}")
+    #             if self.day_of_week == '6':
+    #                 self.message_post(body=f"KG(PS): {KG_PS} -> {self.KG_PS}")
+    #                 self.message_post(body=f"DL(PS): {DL_PS} -> {self.DL_PS}")
+    #                 self.message_post(body=f"TG(PS): {TG_PS} -> {self.TG_PS}")
+    #     return res
+
 
 class PlanedLine(models.Model):
     _name = 'planed.line'
@@ -129,7 +190,7 @@ class PlanedLine(models.Model):
     VL_PS = fields.Integer(string='VL(PS)')
 
     HCM_2 = fields.Integer(string='TP HCM', readonly=1)
-    HCM_2_PS = fields.Integer(string='TP HCM(PS)')
+    HCM_2_PS = fields.Integer(string='TP HCM(PS)', tracking=True)
 
     LA = fields.Integer(string='LA', readonly=1)
     LA_PS = fields.Integer(string='LA(PS)')
